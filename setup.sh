@@ -5,12 +5,12 @@
 #
 if ! command -v brew 2>&1 >/dev/null; then
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        BREW_BIN_PATH = "/home/linuxbrew/.linuxbrew/bin"
+        BREW_BIN_PATH="/home/linuxbrew/.linuxbrew/bin"
         sudo useradd -m -s /bin/bash linuxbrew
         sudo sh -c "printf 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers"
         # keep brew installs the last intentionally, so that the host/parent system defaults do not change
-        sudo sh -c "printf 'export PATH=${PATH}:${BREW_BIN_PATH}' >>/home/linuxbrew/.bashrc"
-        sudo sh -c "printf 'export PATH=${PATH}:${BREW_BIN_PATH}' >>${HOME}/.bashrc"
+        sudo sh -c "printf '\nexport PATH=\${PATH}:${BREW_BIN_PATH}\n' >>/home/linuxbrew/.bashrc"
+        sudo sh -c "printf '\nexport PATH=\${PATH}:${BREW_BIN_PATH}\n' >>${HOME}/.bashrc"
         export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
         sudo -u linuxbrew -H NONINTERACTIVE=1 PATH=$PATH /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
         sudo chown -R $(whoami) /home/linuxbrew/.linuxbrew
