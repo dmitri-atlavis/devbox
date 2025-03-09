@@ -60,7 +60,7 @@ brew install --cask font-hack-nerd-font
 #
 git clone https://github.com/dmitri-atlavis/devbox.git ~/atlavis-devbox
 cp ~/atlavis-devbox/.p10k.zsh ~
-cp -r ~/atlavis-devbox/.config/* ~/.config
+cp -r ~/atlavis-devbox/.config ~/.config
 rm -rf ~/atlavis-devbox
 
 # Setup tmux
