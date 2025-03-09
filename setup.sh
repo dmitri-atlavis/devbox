@@ -34,12 +34,6 @@ fi
 if ! command -v zsh 2>&1 >/dev/null; then
     brew install zsh
     sudo chsh -s $(which zsh) $(whoami)
-
-    printf "\nalias v=nvim" >>~/.zshrc
-    printf "\nalias tmux='tmux -u'\n" >>~/.zshrc
-    printf "\nexport TERM=xterm-256color\n" >>~/.zshrc
-    printf "\nexport PATH=/home/linuxbrew/.linuxbrew/bin:\${PATH}\n" >>~/.zshrc
-    printf "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>~/.zshrc
 fi
 
 # Install oh-my-zsh
@@ -50,6 +44,13 @@ if [ ! -d ~/.oh-my-zsh/custom/themes/powerlevel10k ]; then
     zsh -c 'git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"'
     sed -i -e 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' ~/.zshrc
 fi
+
+# Setup zsh
+printf "\nalias v=nvim" >>~/.zshrc
+printf "\nalias tmux='tmux -u'\n" >>~/.zshrc
+printf "\nexport TERM=xterm-256color\n" >>~/.zshrc
+printf "\nexport PATH=/home/linuxbrew/.linuxbrew/bin:\${PATH}\n" >>~/.zshrc
+printf "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>~/.zshrc
 
 # Install tools
 brew install lazygit neovim node tmux yazi
