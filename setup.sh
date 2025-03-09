@@ -58,7 +58,7 @@ brew install --cask font-hack-nerd-font
 #
 # Sync configurations
 #
-git clone git@github.com:dmitri-atlavis/devbox.git ~/atlavis-devbox
+git clone https://github.com/dmitri-atlavis/devbox.git ~/atlavis-devbox
 cp ~/atlavis-devbox/.p10k.zsh ~
 cp -r ~/atlavis-devbox/.config/* ~/.config
 
