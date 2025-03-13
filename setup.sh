@@ -108,6 +108,7 @@ printf "%s\n""\
     "# terminal settings" \
     "export TERM=xterm-256color" \
     "export EDITOR=nvim" \
+    "bindkey -v" \
     "" \
     "#" \
     "# End of Atlavis DevBox Config" \
