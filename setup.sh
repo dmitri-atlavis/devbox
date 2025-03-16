@@ -45,6 +45,10 @@ printf "Archived current configs to $ARCHIVE_DIR\n"
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     sudo apt update
     sudo apt install --no-install-recommends -y ${LINUX_BASE_PACKAGES}
+
+    # switch default shell to zsh
+    chsh -s ~/.zshrc
+
     #
     # Install the rest manually
     #
