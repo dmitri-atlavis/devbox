@@ -1,37 +1,17 @@
 #!/bin/bash
 
-#
-# Install base packages
-#
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    if command -v apt 2>&1 >/dev/null; then
-        sudo apt update
-        sudo apt install --no-install-recommends -y zsh
-        # switch current user to zsh by default
-        sudo chsh -s $(which zsh) $(whoami)
-        # install brew for linux
-        BREW_BIN_PATH="/home/linuxbrew/.linuxbrew/bin"
-        export PATH=$BREW_BIN_PATH:$PATH
-        sudo useradd -m -s /bin/bash linuxbrew
-        sudo sh -c "printf 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers"
-        sudo -u linuxbrew -H NONINTERACTIVE=1 PATH=$PATH /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-        sudo chown -R $(whoami) /home/linuxbrew/.linuxbrew
-    else
-        printf "Only MacOS and Ubuntu are supported at the moment."
-        exit 1
-    fi
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    BREW_BIN_PATH="/opt/homebrew/bin"
-    if ! command -v brew 2>&1 >/dev/null; then
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-else
-    printf "Only MacOS and Ubuntu are supported at the moment."
+SUPPORTED_OS="MacOS and Ubuntu"
+
+COMMON_BASE_PACKAGES="7zip git imagemagick fzf neovim npm ripgrep tmux zoxide"
+LINUX_BASE_PACKAGES="${COMMON_BASE_PACKAGES} curl fd-find jq poppler-utils zsh unzip"
+MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd font-hack-nerd-font lazygit yazi"
+
+DEVBOX_PATHS=""
+
+if ! command -v apt 2>&1 >/dev/null && [[ "$OSTYPE" != "darwin"* ]]; then
+    printf "Only MacOS and Ubuntu are supported"
     exit 1
 fi
-
-# Install git and node
-brew install --quiet git node
 
 #
 # Archive old configs into a directory
@@ -59,6 +39,63 @@ fi
 
 printf "Archived current configs to $ARCHIVE_DIR\n"
 
+#
+# Install base packages
+#
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    sudo apt update
+    sudo apt install --no-install-recommends -y ${LINUX_BASE_PACKAGES}
+    #
+    # Install the rest manually
+    #
+
+    # Nerd fonts
+    declare -a fonts=(Hack)
+
+    fonts_version=$(curl -s 'https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest' | jq -r '.name')
+    if [ -z "$version" ] || [ "$version" = "null" ]; then
+        version="v3.2.1"
+    fi
+    echo "latest fonts version: $version"
+
+    fonts_dir="${HOME}/.local/share/fonts"
+
+    if [[ ! -d "$fonts_dir" ]]; then
+        mkdir -p "$fonts_dir"
+    fi
+
+    for font in "${fonts[@]}"; do
+        zip_file="${font}.zip"
+        download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/${version}/${zip_file}"
+        wget "$download_url"
+        unzip -o "$zip_file" -d "$fonts_dir" # Added the -o option here to allow replacing
+        rm "$zip_file"
+    done
+
+    find "$fonts_dir" -name 'Windows Compatible' -delete
+
+    # LazyGit
+    LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+    tar xf lazygit.tar.gz lazygit
+    sudo install lazygit -D -t /usr/local/bin/
+
+    # Yazi
+    curl https://sh.rustup.rs -sSf | bash -s -- -y
+    git clone https://github.com/sxyazi/yazi.git
+    cd yazi && ~/.cargo/bin/cargo build --release --locked
+    sudo mv target/release/yazi target/release/ya /usr/local/bin/
+    rm -rf yazi
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    BREW_BIN_PATH="/opt/homebrew/bin"
+    if ! command -v brew 2>&1 >/dev/null; then
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    brew install --quiet ${MAC_BASE_PACKAGES}
+    DEVBOX_PATHS="export PATH=$BREW_BIN_PATH:\$PATH"
+fi
+
 # Install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
@@ -69,9 +106,11 @@ if [ ! -d ~/.oh-my-zsh/custom/themes/powerlevel10k ]; then
     printf "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh\n" >>~/.zshrc
 fi
 
-# Install plugins and tools
-brew install --quiet lazygit neovim tmux yazi zsh-autosuggestions zsh-syntax-highlighting
-brew install --cask --quiet font-hack-nerd-font
+# Install zsh autosuggestions plugin
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# Install zsh syntax highlighter plugin
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 #
 # Sync configurations
@@ -95,11 +134,10 @@ printf "%s\n""\
     "#" \
     "" \
     "# Paths" \
-    "export PATH=$BREW_BIN_PATH:\$PATH" \
+    "$DEVBOX_PATHS" \
     "" \
     "# zsh plugins" \
-    "source \$($BREW_BIN_PATH/brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
-    "source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+    "plugins=( zsh-autosuggestions zsh-syntax-highlighting)" \
     "" \
     "# aliases" \
     "alias v=nvim" \
