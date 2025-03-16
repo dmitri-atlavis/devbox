@@ -127,6 +127,8 @@ git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 #
 # Write to .zshrc
 #
+sed -i -e 's/plugins=\(.*\)/plugins=\( git zsh-autosuggestions zsh-syntax-highlighting \)/g' ~/.zshrc
+
 printf "%s\n""\
 " \
     "#" \
@@ -135,9 +137,6 @@ printf "%s\n""\
     "" \
     "# Paths" \
     "$DEVBOX_PATHS" \
-    "" \
-    "# zsh plugins" \
-    "plugins=( zsh-autosuggestions zsh-syntax-highlighting)" \
     "" \
     "# aliases" \
     "alias v=nvim" \
