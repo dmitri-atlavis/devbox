@@ -6,7 +6,7 @@
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     if command -v apt 2>&1 >/dev/null; then
         sudo apt update
-        sudo apt install --no-install-recommends -y curl zsh
+        sudo apt install --no-install-recommends -y zsh
         # switch current user to zsh by default
         sudo chsh -s $(which zsh) $(whoami)
         # install brew for linux
