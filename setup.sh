@@ -8,7 +8,7 @@ MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd font-hack-nerd-font lazygit yazi"
 
 DEVBOX_PATHS=""
 
-if ! command -v apt 2>&1 >/dev/null && [[ "$OSTYPE" != "darwin"* ]]; then
+if ! command -v apt-get 2>&1 >/dev/null && [[ "$OSTYPE" != "darwin"* ]]; then
     printf "Only MacOS and Ubuntu are supported"
     exit 1
 fi
@@ -43,8 +43,8 @@ printf "Archived current configs to $ARCHIVE_DIR\n"
 # Install base packages
 #
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    sudo apt update
-    sudo apt install --no-install-recommends -y ${LINUX_BASE_PACKAGES}
+    sudo apt-get update
+    sudo apt-get install --no-install-recommends -y ${LINUX_BASE_PACKAGES}
 
     # switch default shell to zsh
     usermod --shell /usr/bin/zsh $(whoami)
