@@ -52,7 +52,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     #
     # The rest is installed manually
     #
-    sudo add-apt-repository ppa:neovim-ppa/unstable
+    sudo add-apt-repository -y ppa:neovim-ppa/unstable
     sudo apt-get update
     sudo apt-get install neovim
 
