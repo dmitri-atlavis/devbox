@@ -47,7 +47,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     sudo apt install --no-install-recommends -y ${LINUX_BASE_PACKAGES}
 
     # switch default shell to zsh
-    chsh -s ~/.zshrc
+    usermod --shell /usr/bin/zsh $(whoami)
 
     #
     # Install the rest manually
@@ -144,6 +144,7 @@ printf "%s\n""\
     "" \
     "# aliases" \
     "alias v=nvim" \
+    "alias lg=lazygit" \
     "alias tmux='tmux -u'" \
     "" \
     "# terminal settings" \
