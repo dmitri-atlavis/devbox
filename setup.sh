@@ -78,6 +78,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
     find "$fonts_dir" -name 'Windows Compatible' -delete
 
+    mkdir /tmp/devbox
+    cd /tmp/devbox
+
     # LazyGit
     LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
@@ -89,7 +92,8 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     git clone https://github.com/sxyazi/yazi.git
     cd yazi && ~/.cargo/bin/cargo build --release --locked
     sudo mv target/release/yazi target/release/ya /usr/local/bin/
-    rm -rf yazi
+
+    rm -rf /tmp/devbox
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     BREW_BIN_PATH="/opt/homebrew/bin"
