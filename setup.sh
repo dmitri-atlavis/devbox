@@ -2,8 +2,8 @@
 
 SUPPORTED_OS="MacOS and Ubuntu"
 
-COMMON_BASE_PACKAGES="7zip git imagemagick fzf neovim npm ripgrep tmux zoxide"
-LINUX_BASE_PACKAGES="${COMMON_BASE_PACKAGES} curl fd-find jq poppler-utils zsh unzip"
+COMMON_BASE_PACKAGES="7zip git imagemagick fzf npm ripgrep tmux zoxide"
+LINUX_BASE_PACKAGES="${COMMON_BASE_PACKAGES} curl fd-find jq poppler-utils software-properties-common zsh unzip"
 MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd font-hack-nerd-font lazygit yazi"
 
 DEVBOX_PATHS=""
@@ -50,8 +50,11 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     usermod --shell /usr/bin/zsh $(whoami)
 
     #
-    # Install the rest manually
+    # The rest is installed manually
     #
+    sudo add-apt-repository ppa:neovim-ppa/unstable
+    sudo apt-get update
+    sudo apt-get install neovim
 
     mkdir /tmp/devbox
     cd /tmp/devbox
