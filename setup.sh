@@ -43,8 +43,9 @@ printf "Archived current configs to $ARCHIVE_DIR\n"
 # Install base packages
 #
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    export DEBIAN_FRONTEND=noninteractive
     sudo apt-get update
-    sudo apt-get install --no-install-recommends -y ${LINUX_BASE_PACKAGES}
+    sudo apt-get install --no-install-recommends -y ${LINUX_BASE_PACKAGES} apt-utils
 
     # switch default shell to zsh
     usermod --shell /usr/bin/zsh $(whoami)
@@ -54,7 +55,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     #
     sudo add-apt-repository -y ppa:neovim-ppa/unstable
     sudo apt-get update
-    sudo apt-get install -y neovim
+    sudo apt-get install --no-install-recommends -y neovim
 
     mkdir /tmp/devbox
     cd /tmp/devbox
