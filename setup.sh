@@ -128,10 +128,18 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:
 #
 # Sync configurations
 #
-git clone https://github.com/dmitri-atlavis/devbox.git ~/atlavis-devbox
-cp ~/atlavis-devbox/.p10k.zsh ~
-cp -r ~/atlavis-devbox/.config ~
-rm -rf ~/atlavis-devbox
+DEVBOX_DIR=~/.config/atlavis-devbox
+ATLAVIS_DEVBOX_DIR=${DEVBOX_DIR}/atlavis
+mkdir -p ${DEVBOX_DIR}
+rm -rf ${ATLAVIS_DEVBOX_DIR}
+git clone https://github.com/dmitri-atlavis/devbox.git ${ATLAVIS_DEVBOX_DIR}
+cp ${ATLAVIS_DEVBOX_DIR}/.p10k.zsh ~
+cp -r ${ATLAVIS_DEVBOX_DIR}/.config ~
+
+# copy custom configs if any
+if [ -d ${DEVBOX_DIR}/custom ]; then
+    cp -r ~/devbox-extra/* ~
+fi
 
 # Setup tmux
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
@@ -154,6 +162,7 @@ printf "%s\n""\
     "# aliases" \
     "alias v=nvim" \
     "alias lg=lazygit" \
+    "alias y=yazi" \
     "alias tmux='tmux -u'" \
     "" \
     "# terminal settings" \
