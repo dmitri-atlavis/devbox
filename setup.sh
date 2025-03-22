@@ -138,7 +138,7 @@ cp -r ${ATLAVIS_DEVBOX_DIR}/.config ~
 
 # copy custom configs if any
 if [ -d ${DEVBOX_DIR}/custom ]; then
-    cp -r ${DEVBOX_DIR}/custom/* ~
+    cp -r ${DEVBOX_DIR}/custom/. ~
 fi
 
 # Setup tmux
