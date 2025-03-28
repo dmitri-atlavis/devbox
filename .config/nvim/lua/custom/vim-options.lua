@@ -11,4 +11,5 @@ vim.o.shiftwidth = 4 -- Number of spaces inserted when indenting
 map('n', '<C-g>', '<CMD>GitBlameToggle<CR>', map_opts)
 map('n', '-', '<CMD>Oil --float<CR>', { desc = 'Open directory' })
 map('n', '<Leader>sb', '<CMD>Telescope file_browser<CR>', map_opts)
-map('n', '<Leader>s,', ':lua require"telescope.builtin".find_files({ hidden = true })<CR>', { noremap = true, silent = true })
+map('n', '<Leader>s,', ':lua require("telescope.builtin").find_files({ hidden = true })<CR>', map_opts)
+map('n', '<Leader><Leader>', ':lua require("telescope.builtin").buffers({ sort_lastused = true, ignore_current_buffer = true })<CR>', map_opts)
