@@ -9,6 +9,8 @@ vim.o.shiftwidth = 4 -- Number of spaces inserted when indenting
 -- Git blame
 map('n', '<C-g>', '<CMD>GitBlameToggle<CR>', { desc = 'Git blame' })
 map('n', '<C-x>', '<CMD>bd<CR>', { desc = 'Delete buffer' })
+map('n', '<C-x><C-a>', '<CMD>%bd<CR>', { desc = 'Delete all buffers' })
+map('n', '<C-q>', '<CMD>%bd|e#<CR>', { desc = 'Delete all buffers except this one' })
 map('n', '-', '<CMD>Oil --float<CR>', { desc = 'Open directory' })
 map('n', '<Leader>b', '<CMD>Telescope file_browser<CR>', { desc = 'File [B]rowser' })
 map('n', '<Leader>sF', ':lua require("telescope.builtin").find_files({ hidden = true })<CR>', { desc = '[S]earch Hidden [F]iles' })
