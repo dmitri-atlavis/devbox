@@ -3,9 +3,9 @@ set -e # Exit on error
 
 SUPPORTED_OS="MacOS and Ubuntu"
 
-COMMON_BASE_PACKAGES="7zip git imagemagick fzf npm ripgrep tmux zoxide"
+COMMON_BASE_PACKAGES="7zip git imagemagick fzf ripgrep tmux zoxide"
 LINUX_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd-find jq poppler-utils software-properties-common zsh unzip"
-MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd font-hack-nerd-font lazygit yazi"
+MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd font-hack-nerd-font lazygit npm yazi"
 
 DEVBOX_PATHS=""
 
@@ -55,10 +55,10 @@ install_linux_packages() {
 
     sudo apt-get update
     sudo apt-get install --no-install-recommends -y curl
-    cd /tmp
     curl -sL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh
     sudo bash nodesource_setup.sh
     sudo apt install --no-install-recommends -y nodejs
+    rm -rf nodesource_setup.sh
     sudo apt-get install --no-install-recommends -y ${LINUX_BASE_PACKAGES} apt-utils || {
         echo "Error: Failed to install base packages"
         exit 1
