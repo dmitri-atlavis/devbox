@@ -20,6 +20,6 @@ map(
   { desc = 'Open Buffers' }
 )
 -- File System
-map('n', '/', '<CMD>Neotree<CR>', { desc = 'Neotree' })
+map('n', '\\', '<CMD>Neotree<CR>', { desc = 'Neotree' })
 map('n', '-', '<CMD>Oil --float<CR>', { desc = 'Open directory' })
 map('n', '<Leader>sF', ':lua require("telescope.builtin").find_files({ hidden = true })<CR>', { desc = '[S]earch Hidden [F]iles' })
