@@ -57,6 +57,9 @@ install_linux_packages() {
     sudo apt-get install --no-install-recommends -y curl
     curl -sL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh
     sudo bash nodesource_setup.sh
+    sudo apt-get update
+    sudo apt-get clean
+    sudo apt-get autoremove
     sudo apt install --no-install-recommends -y nodejs
     rm -rf nodesource_setup.sh
     sudo apt-get install --no-install-recommends -y ${LINUX_BASE_PACKAGES} apt-utils || {
