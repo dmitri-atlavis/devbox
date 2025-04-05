@@ -19,7 +19,16 @@ map(
   ':lua require("telescope.builtin").buffers({ sort_lastused = true, ignore_current_buffer = true, initial_mode="normal" })<CR>',
   { desc = 'Open Buffers' }
 )
+
 -- File System
 map('n', '\\', '<CMD>Neotree<CR>', { desc = 'Neotree' })
 map('n', '-', '<CMD>Oil --float<CR>', { desc = 'Open directory' })
 map('n', '<Leader>sF', ':lua require("telescope.builtin").find_files({ hidden = true })<CR>', { desc = '[S]earch Hidden [F]iles' })
+
+-- Disable tree-sitter for Dockerfiles
+require('nvim-treesitter.configs').setup {
+  highlight = {
+    enable = true,
+    disable = { 'dockerfile' },
+  },
+}
