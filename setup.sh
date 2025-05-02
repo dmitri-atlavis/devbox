@@ -100,19 +100,6 @@ install_linux_packages() {
         sudo install lazygit -D -t /usr/local/bin/
     fi
 
-    # Install Yazi
-    if ! command_exists yazi; then
-        echo "Installing Yazi..."
-        if ! command_exists cargo; then
-            curl https://sh.rustup.rs -sSf | bash -s -- -y
-            source "$HOME/.cargo/env"
-        fi
-
-        git clone https://github.com/sxyazi/yazi.git
-        cd yazi && cargo build --release --locked
-        sudo install -D target/release/yazi target/release/ya -t /usr/local/bin/
-    fi
-
     # Clean up
     cd
     rm -rf "${tmp_dir}"
