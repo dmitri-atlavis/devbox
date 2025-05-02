@@ -32,3 +32,16 @@ require('nvim-treesitter.configs').setup {
     disable = { 'dockerfile' },
   },
 }
+
+require('telescope').setup {
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    mappings = {
+      n = {
+        ['d'] = require('telescope.actions').delete_buffer,
+      },
+    }, -- mappings
+  }, -- defaults
+  ...,
+} -- telescope setup
