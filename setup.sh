@@ -3,9 +3,9 @@ set -e # Exit on error
 
 SUPPORTED_OS="MacOS and Ubuntu"
 
-COMMON_BASE_PACKAGES="7zip git imagemagick fzf ripgrep tmux zoxide"
+COMMON_BASE_PACKAGES="7zip git fzf ripgrep"
 LINUX_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd-find jq poppler-utils software-properties-common zsh unzip"
-MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd font-hack-nerd-font lazygit npm yazi"
+MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} imagemagick fd font-hack-nerd-font lazygit npm tmux yazi"
 
 DEVBOX_PATHS=""
 

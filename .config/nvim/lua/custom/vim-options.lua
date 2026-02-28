@@ -100,21 +100,28 @@ vim.api.nvim_create_autocmd('BufEnter', {
   desc = 'Manage buffer count limit',
 })
 
--- LazyGit: Double escape to close (consistent with telescope)
-local escape_count = 0
-local escape_timer = nil
-
+-- LazyGit: Custom close mappings (avoiding conflict with lazygit's escape usage)
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'lazygit',
   callback = function()
-    vim.keymap.set('n', '<Esc>', function()
+    -- Use Ctrl+C (like many terminal apps) for quick close
+    vim.keymap.set('n', '<C-c>', '<CMD>close<CR>', { buffer = true, desc = 'Close LazyGit' })
+
+    -- Alternative: Use leader+q for consistent close behavior
+    vim.keymap.set('n', '<Leader>q', '<CMD>close<CR>', { buffer = true, desc = 'Close LazyGit' })
+
+    -- Double Ctrl+[ (escape equivalent but more explicit) for telescope-like behavior
+    local escape_count = 0
+    local escape_timer = nil
+
+    vim.keymap.set('n', '<C-[>', function()
       escape_count = escape_count + 1
 
       if escape_timer then
         vim.fn.timer_stop(escape_timer)
       end
 
-      escape_timer = vim.fn.timer_start(500, function()
+      escape_timer = vim.fn.timer_start(300, function()
         escape_count = 0
         escape_timer = nil
       end)
@@ -127,7 +134,7 @@ vim.api.nvim_create_autocmd('FileType', {
           escape_timer = nil
         end
       end
-    end, { buffer = true, desc = 'Double escape to close LazyGit' })
+    end, { buffer = true, desc = 'Double Ctrl+[ to close LazyGit' })
   end,
 })
 
