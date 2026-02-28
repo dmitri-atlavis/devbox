@@ -1,40 +1,26 @@
 # devbox
 
-Dockerized development environments.
+Terminal-first development environment for macOS.
 
-WARNING:
-Run in isolated (dockerized) environments.
-Executing this script on a host machine may destroy your environment settings.
+## What's Included
 
-Components:
+- **zsh** with Starship prompt, autosuggestions, syntax highlighting
+- **neovim** with custom config (LSP, completion, file management)
+- **tmux** with custom config and plugins
+- **lazygit**, **yazi**, **fzf**, **ripgrep**, **fd**
+- **Hack Nerd Font**
 
-- zsh with Starship prompt, autosuggestions, syntax highlighting
-- tmux with custom setup
-- neovim customized and adopted to python development from the nvim-lua/kickstart.nvim
-- yazi
-- lazigit
+## Install
 
-## Installation
-
-### Prerequisites
-
-- glibc and gcc
-- curl
-- sudo
-
-Add dev docker instructions:
-
+```sh
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/dmitri-atlavis/devbox/main/setup.sh)"
 ```
-# Add dev user
-RUN useradd -m -s /bin/bash dev && \
-    echo 'dev ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
-RUN chown -R dev /home/dev
-WORKDIR /home/dev
-USER dev
 
-# Setup dev environment
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dmitri-atlavis/devbox/refs/heads/main/setup.sh)"
+The script will show a plan and ask for confirmation before making changes. Existing configs are backed up to `/tmp/`.
 
-ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["zsh"]
-```
+## Aliases
+
+- `v` → nvim
+- `lg` → lazygit
+- `y` → yazi
+- `tmux` → tmux -u

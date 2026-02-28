@@ -68,22 +68,29 @@ echo ""
 
 # === Ask Permission ===
 
-echo "Proceed?"
-echo "  Y - run all steps without confirmation"
-echo "  y - confirm each step before running"
-echo "  N - abort"
-echo ""
-read -n 1 -r response
-echo ""
-
-if [[ "${response}" == "N" || "${response}" == "n" ]]; then
-    echo "Aborted."
-    exit 0
-fi
-
 confirm_each=false
-if [[ "${response}" == "y" ]]; then
-    confirm_each=true
+
+if [ -t 0 ]; then
+    # Interactive: stdin is a terminal
+    echo "Proceed?"
+    echo "  Y - run all steps without confirmation"
+    echo "  y - confirm each step before running"
+    echo "  N - abort"
+    echo ""
+    read -n 1 -r response
+    echo ""
+
+    if [[ "${response}" == "N" || "${response}" == "n" ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+
+    if [[ "${response}" == "y" ]]; then
+        confirm_each=true
+    fi
+else
+    # Non-interactive: piped from curl
+    echo "Running in non-interactive mode..."
 fi
 
 run_step() {
