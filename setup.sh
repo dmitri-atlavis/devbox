@@ -75,13 +75,13 @@ install_linux_packages() {
         }
     fi
 
-    # Install neovim
+    # Install or update neovim
     if ! command_exists nvim; then
-        echo "Installing Neovim..."
         sudo add-apt-repository -y ppa:neovim-ppa/unstable
         sudo apt-get update
-        sudo apt-get install --no-install-recommends -y neovim
     fi
+    echo "Installing/updating Neovim..."
+    sudo apt-get install --no-install-recommends -y neovim
 
     # Create temporary directory for downloads
     local tmp_dir=$(mktemp -d)
@@ -91,14 +91,13 @@ install_linux_packages() {
     echo "Installing Nerd fonts..."
     install_nerd_fonts
 
-    # Install LazyGit
+    # Install or update LazyGit via PPA
     if ! command_exists lazygit; then
-        echo "Installing LazyGit..."
-        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-        tar xf lazygit.tar.gz lazygit
-        sudo install lazygit -D -t /usr/local/bin/
+        sudo add-apt-repository -y ppa:lazygit-team/release
+        sudo apt-get update
     fi
+    echo "Installing/updating LazyGit..."
+    sudo apt-get install --no-install-recommends -y lazygit
 
     # Clean up
     cd
@@ -166,9 +165,9 @@ install_macos_packages() {
     # Add Homebrew to PATH for this session
     export PATH="${BREW_BIN_PATH}:${PATH}"
 
-    # Install packages
-    echo "Installing packages with Homebrew..."
-    brew install --quiet ${MAC_BASE_PACKAGES}
+    # Install or upgrade packages
+    echo "Installing/updating packages with Homebrew..."
+    brew upgrade --quiet ${MAC_BASE_PACKAGES} 2>/dev/null || brew install --quiet ${MAC_BASE_PACKAGES}
 
     # Set path for zshrc
     DEVBOX_PATHS="export PATH=${BREW_BIN_PATH}:\$PATH"
