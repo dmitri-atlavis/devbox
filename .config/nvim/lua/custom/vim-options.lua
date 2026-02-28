@@ -13,25 +13,9 @@ map('n', '<C-g>', '<CMD>GitBlameToggle<CR>', { desc = 'Git blame' })
 map('n', '<C-x>', '<CMD>bd<CR>', { desc = 'Delete buffer' })
 map('n', '<C-x><C-a>', '<CMD>%bd<CR>', { desc = 'Delete all buffers' })
 map('n', '<C-q>', '<CMD>%bd|e#<CR>', { desc = 'Delete all buffers except this one' })
-map(
-  'n',
-  '<Leader><Leader>',
-  ':lua require("telescope.builtin").buffers({ sort_lastused = true, ignore_current_buffer = true, initial_mode="normal" })<CR>',
-  { desc = 'Open Buffers' }
-)
 
 -- File System
-map('n', '\\', '<CMD>Neotree<CR>', { desc = 'Neotree' })
 map('n', '-', '<CMD>Oil --float<CR>', { desc = 'Open directory' })
-map('n', '<Leader>sF', ':lua require("telescope.builtin").find_files({ hidden = true })<CR>', { desc = '[S]earch Hidden [F]iles' })
-
--- Disable tree-sitter for Dockerfiles
-require('nvim-treesitter.configs').setup {
-  highlight = {
-    enable = true,
-    disable = { 'dockerfile' },
-  },
-}
 
 -- Buffer Management: Auto-save and limit to 5 buffers
 local function auto_save_buffer()
@@ -100,53 +84,3 @@ vim.api.nvim_create_autocmd('BufEnter', {
   desc = 'Manage buffer count limit',
 })
 
--- LazyGit: Custom close mappings (avoiding conflict with lazygit's escape usage)
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'lazygit',
-  callback = function()
-    -- Use Ctrl+C (like many terminal apps) for quick close
-    vim.keymap.set('n', '<C-c>', '<CMD>close<CR>', { buffer = true, desc = 'Close LazyGit' })
-
-    -- Alternative: Use leader+q for consistent close behavior
-    vim.keymap.set('n', '<Leader>q', '<CMD>close<CR>', { buffer = true, desc = 'Close LazyGit' })
-
-    -- Double Ctrl+[ (escape equivalent but more explicit) for telescope-like behavior
-    local escape_count = 0
-    local escape_timer = nil
-
-    vim.keymap.set('n', '<C-[>', function()
-      escape_count = escape_count + 1
-
-      if escape_timer then
-        vim.fn.timer_stop(escape_timer)
-      end
-
-      escape_timer = vim.fn.timer_start(300, function()
-        escape_count = 0
-        escape_timer = nil
-      end)
-
-      if escape_count >= 2 then
-        vim.cmd 'close'
-        escape_count = 0
-        if escape_timer then
-          vim.fn.timer_stop(escape_timer)
-          escape_timer = nil
-        end
-      end
-    end, { buffer = true, desc = 'Double Ctrl+[ to close LazyGit' })
-  end,
-})
-
-require('telescope').setup {
-  defaults = {
-    -- Default configuration for telescope goes here:
-    -- config_key = value,
-    mappings = {
-      n = {
-        ['d'] = require('telescope.actions').delete_buffer,
-      },
-    }, -- mappings
-  }, -- defaults
-  ...,
-} -- telescope setup

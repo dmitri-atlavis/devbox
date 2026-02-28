@@ -28,14 +28,8 @@ return {
       sources = sources,
     }
 
-    -- disable pyright formatting and imports organization
-    require('lspconfig').pyright.setup {
-      settings = {
-        pyright = {
-          -- Using Ruff's import organizer
-          disableOrganizeImports = true,
-        },
-      },
-    }
+    -- disable pyright imports organization (using Ruff's import organizer)
+    vim.lsp.config('pyright', { settings = { pyright = { disableOrganizeImports = true } } })
+    vim.lsp.enable 'pyright'
   end,
 }
