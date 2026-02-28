@@ -60,7 +60,6 @@ format = "[$time]($style)"
 success_symbol = "[❯](bold green)"
 error_symbol = "[❯](bold red)"
 
-[palette]
 palette = "catppuccin_mocha"
 
 [palettes.catppuccin_mocha]
