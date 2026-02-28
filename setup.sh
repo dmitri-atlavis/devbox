@@ -5,7 +5,7 @@ SUPPORTED_OS="MacOS and Ubuntu"
 
 COMMON_BASE_PACKAGES="7zip git fzf ripgrep"
 LINUX_BASE_PACKAGES="${COMMON_BASE_PACKAGES} fd-find jq poppler-utils software-properties-common zsh unzip"
-MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} imagemagick fd font-hack-nerd-font lazygit npm tmux yazi"
+MAC_BASE_PACKAGES="${COMMON_BASE_PACKAGES} imagemagick fd font-hack-nerd-font lazygit npm starship tmux yazi"
 
 DEVBOX_PATHS=""
 
@@ -32,7 +32,7 @@ backup_configs() {
     rm -rf "${ARCHIVE_DIR}"
     mkdir -p "${ARCHIVE_DIR}"
 
-    for item in ~/.oh-my-zsh ~/.zshrc ~/.config/nvim ~/.config/tmux; do
+    for item in ~/.zsh ~/.zshrc ~/.config/nvim ~/.config/tmux ~/.config/starship.toml; do
         if [[ -e "${item}" ]]; then
             echo "Backing up ${item}"
             cp -r "${item}" "${ARCHIVE_DIR}/"
@@ -173,25 +173,34 @@ install_macos_packages() {
     DEVBOX_PATHS="export PATH=${BREW_BIN_PATH}:\$PATH"
 }
 
+# Function to install Starship prompt
+install_starship() {
+    if command_exists starship; then
+        echo "Starship already installed."
+        return
+    fi
+
+    echo "Installing Starship prompt..."
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+}
+
 # Function to install zsh plugins
 install_zsh_plugins() {
-    echo "Installing Oh My Zsh..."
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    local plugins_dir="${HOME}/.zsh/plugins"
+    mkdir -p "${plugins_dir}"
 
-    # Install powerlevel10k theme
-    if [[ ! -d ~/.oh-my-zsh/custom/themes/powerlevel10k ]]; then
-        echo "Installing Powerlevel10k theme..."
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-    fi
-
-    # Install zsh plugins
     echo "Installing Zsh plugins..."
-    if [[ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions ]]; then
-        git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+    if [[ ! -d "${plugins_dir}/zsh-autosuggestions" ]]; then
+        git clone https://github.com/zsh-users/zsh-autosuggestions "${plugins_dir}/zsh-autosuggestions"
+    else
+        echo "zsh-autosuggestions already installed."
     fi
 
-    if [[ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]]; then
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    if [[ ! -d "${plugins_dir}/zsh-syntax-highlighting" ]]; then
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${plugins_dir}/zsh-syntax-highlighting"
+    else
+        echo "zsh-syntax-highlighting already installed."
     fi
 }
 
@@ -215,7 +224,6 @@ sync_configurations() {
 
     # Copy configuration files
     echo "Copying configuration files..."
-    cp ${ATLAVIS_DEVBOX_DIR}/.p10k.zsh ~
 
     # Ensure .config directory exists
     mkdir -p ~/.config
@@ -240,47 +248,36 @@ sync_configurations() {
 configure_zshrc() {
     echo "Configuring Zsh..."
 
-    # Use different sed syntax based on OS
-    if [[ "${OS_TYPE}" == "macos" ]]; then
-        sed -i '' 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' ~/.zshrc
-        sed -i '' 's/plugins=\(.*\)/plugins=\( git zsh-autosuggestions zsh-syntax-highlighting \)/g' ~/.zshrc
-    else
-        sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' ~/.zshrc
-        sed -i 's/plugins=\(.*\)/plugins=\( git zsh-autosuggestions zsh-syntax-highlighting \)/g' ~/.zshrc
-    fi
-
-    # Add p10k configuration
-    if ! grep -q "source ~/.p10k.zsh" ~/.zshrc; then
-        echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>~/.zshrc
-    fi
-
-    # Add Atlavis DevBox configuration
-    if ! grep -q "# Atlavis DevBox Config" ~/.zshrc; then
-        cat >>~/.zshrc <<EOF
-
+    cat >~/.zshrc <<EOF
 #
-# Atlavis DevBox Config
+# Atlavis DevBox .zshrc
 #
 
 # Paths
 ${DEVBOX_PATHS}
 
-# aliases
+# Zsh plugins
+source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Autosuggestion settings
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_USE_ASYNC=true
+
+# Aliases
 alias v=nvim
 alias lg=lazygit
 alias y=yazi
 alias tmux='tmux -u'
 
-# terminal settings
+# Terminal settings
 export TERM=xterm-256color
 export EDITOR=nvim
 bindkey -v
 
-#
-# End of Atlavis DevBox Config
-#
+# Starship prompt
+eval "\$(starship init zsh)"
 EOF
-    fi
 }
 
 # Main installation process
@@ -298,7 +295,12 @@ main() {
         install_macos_packages
     fi
 
-    # Install and configure zsh
+    # Install Starship (curl installer for Linux, already in brew for macOS)
+    if [[ "${OS_TYPE}" == "ubuntu" ]]; then
+        install_starship
+    fi
+
+    # Install zsh plugins (standalone, no OMZ)
     install_zsh_plugins
 
     # Sync configurations

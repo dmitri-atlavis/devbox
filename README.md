@@ -8,7 +8,7 @@ Executing this script on a host machine may destroy your environment settings.
 
 Components:
 
-- zsh with oh-my-zsh and powerlevel10k theme pre-setup
+- zsh with Starship prompt, autosuggestions, syntax highlighting
 - tmux with custom setup
 - neovim customized and adopted to python development from the nvim-lua/kickstart.nvim
 - yazi
